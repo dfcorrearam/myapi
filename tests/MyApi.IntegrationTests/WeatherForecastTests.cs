@@ -13,6 +13,7 @@ public class WeatherForecastTests
         _client = factory.CreateClient();
     }
 
+	[Trait("Category", "Integration")]
     [Fact]
     public async Task GET_weatherforecast_returns_200()
     {
