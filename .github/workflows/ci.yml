@@ -40,9 +40,9 @@ jobs:
   
       - name: Restore
         run: dotnet restore
-  
+
       - name: Run tests with coverage
-        run: dotnet test --collect:"XPlat Code Coverage"
+        run: dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
@@ -52,6 +52,13 @@ jobs:
           reportgenerator \
           -reports:TestResults/**/coverage.cobertura.xml \
           -targetdir:coverage-report \
+          -reporttypes:HtmlInline_AzurePipelines;Cobertura
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: coverage-report
           -reporttypes:HtmlInline_AzurePipelines;Cobertura
 
   
