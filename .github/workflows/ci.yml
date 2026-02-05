@@ -56,6 +56,7 @@ jobs:
           reportgenerator \
           -reports:TestResults/**/coverage.cobertura.xml \
           -targetdir:coverage-report \
+          -reporttypes:HtmlInline_AzurePipelines\;Cobertura
           
       - name: Enforce code coverage
         run: |
@@ -65,9 +66,4 @@ jobs:
             -reporttypes:TextSummary \
             -thresholdtypes:Line \
             -thresholdstatistic:Total \
-            -thresholds:75
-
-          
-          -reporttypes:HtmlInline_AzurePipelines\;Cobertura
-
-  
+            -thresholds:75 
