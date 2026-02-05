@@ -43,4 +43,15 @@ jobs:
   
       - name: Run tests with coverage
         run: dotnet test --collect:"XPlat Code Coverage"
+
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Generate coverage report
+        run: |
+          reportgenerator \
+          -reports:TestResults/**/coverage.cobertura.xml \
+          -targetdir:coverage-report \
+          -reporttypes:HtmlInline_AzurePipelines;Cobertura
+
   
