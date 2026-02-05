@@ -1,10 +1,10 @@
-using FluentAssertions;
 using System.Net;
+using FluentAssertions;
+using Xunit;
 
 namespace MyApi.IntegrationTests;
 
-public class WeatherForecastTests
-    : IClassFixture<CustomWebApplicationFactory>
+public class WeatherForecastTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
@@ -13,12 +13,12 @@ public class WeatherForecastTests
         _client = factory.CreateClient();
     }
 
-    [Trait("Category", "Integration")]
     [Fact]
     public async Task GET_weatherforecast_returns_200()
     {
-        var response = await _client.GetAsync("/weatherforecast");
+        var response = await _client.GetAsync("/WeatherForecast");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
+
