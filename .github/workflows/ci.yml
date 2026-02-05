@@ -52,7 +52,7 @@ jobs:
           reportgenerator \
           -reports:TestResults/**/coverage.cobertura.xml \
           -targetdir:coverage-report \
-          -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+          -reporttypes:HtmlInline_AzurePipelines\;Cobertura
 "          -reporttypes:HtmlInline_AzurePipelines;Cobertura
 
   
