@@ -12,13 +12,13 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<WeatherForecast> WeatherForecasts => Set<WeatherForecast>();
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-	{
-    	modelBuilder.Entity<WeatherForecast>(entity =>
-    	{
-        	entity.Property(e => e.Summary)
-              	.HasMaxLength(500); // o 255, lo que tenga sentido
-    	});
-	}
+    {
+        modelBuilder.Entity<WeatherForecast>(entity =>
+        {
+            entity.Property(e => e.Summary)
+                  .HasMaxLength(500); // o 255, lo que tenga sentido
+        });
+    }
 }

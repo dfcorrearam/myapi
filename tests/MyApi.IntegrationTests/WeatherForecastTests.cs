@@ -3,7 +3,7 @@ using System.Net;
 
 namespace MyApi.IntegrationTests;
 
-public class WeatherForecastTests 
+public class WeatherForecastTests
     : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
@@ -13,7 +13,7 @@ public class WeatherForecastTests
         _client = factory.CreateClient();
     }
 
-	[Trait("Category", "Integration")]
+    [Trait("Category", "Integration")]
     [Fact]
     public async Task GET_weatherforecast_returns_200()
     {
