@@ -63,12 +63,11 @@ jobs:
           reportgenerator \
             -reports:TestResults/**/coverage.cobertura.xml \
             -targetdir:coverage-report \
-            -reporttypes:HtmlInline_AzurePipelines;Cobertura \
+            -reporttypes:HtmlInline_AzurePipelines\;Cobertura \
             -assemblyfilters:+MyApi* \
             -classfilters:+MyApi* \
             -linecoverage:60
 
-          
       - name: Enforce code coverage
         run: |
           reportgenerator \
