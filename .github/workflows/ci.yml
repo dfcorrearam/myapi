@@ -68,6 +68,17 @@ jobs:
             -classfilters:+MyApi* \
             -linecoverage:60
 
+      - name: Generate coverage report (clean)
+        run: |
+          reportgenerator \
+            -reports:TestResults/**/coverage.cobertura.xml \
+            -targetdir:coverage-report \
+            -reporttypes:HtmlInline_AzurePipelines\;Cobertura \
+            -assemblyfilters:+MyApi* \
+            -classfilters:+MyApi*;-MyApi.Api.Program;-MyApi.Api.Migrations* \
+            -filefilters:-**/Program.cs;-**/Migrations/* \
+            -linecoverage:70
+
       - name: Enforce code coverage
         run: |
           reportgenerator \
