@@ -41,6 +41,9 @@ jobs:
       - name: Restore
         run: dotnet restore
 
+      - name: Vulnerability scan (NuGet)
+        run: dotnet list package --vulnerable --include-transitive
+
       - name: Run unit tests with coverage
         run: |
           dotnet test tests/MyApi.UnitTests \
