@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main" ]
   schedule:
-    - cron: '0 3 * * 0' # una vez por semana
+    - cron: '0 3 * * 0' # semanalmente
 
 permissions:
   security-events: write
@@ -18,24 +18,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout del repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Inicializar CodeQL
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: csharp
-          queries: security-extended  # incluye reglas OWASP, crypto, etc.
+          queries: security-extended
 
+      # 3️⃣ Setup .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
+      # 4️⃣ Build del proyecto
       - name: Build project
         run: dotnet build --configuration Release
 
+      # 5️⃣ Analizar con CodeQL y evitar fallo por telemetría
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
+          # Esto evita que falle por Resource not accessible by integration
           upload: false
