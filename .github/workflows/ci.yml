@@ -77,10 +77,12 @@ jobs:
             -reporttypes:TextSummary \
 
       - name: Upload coverage report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage
           path: coverage-report
+
             
             -thresholdtypes:Line \
             -thresholdstatistic:Total \
