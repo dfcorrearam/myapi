@@ -75,6 +75,9 @@ jobs:
             -reports:TestResults/**/coverage.cobertura.xml \
             -targetdir:coverage-report \
             -reporttypes:TextSummary \
+            -thresholdtypes:Line \
+            -thresholdstatistic:Total \
+            -thresholds:75 
 
       - name: Upload coverage report
         if: always()
@@ -82,8 +85,3 @@ jobs:
         with:
           name: code-coverage
           path: coverage-report
-
-            
-            -thresholdtypes:Line \
-            -thresholdstatistic:Total \
-            -thresholds:75 
