@@ -77,9 +77,16 @@ jobs:
             "-targetdir:coverage-integration" \
             "-reporttypes:HtmlInline_AzurePipelines"
  
-      - name: Upload coverage report
+      - name: Upload unit coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage
-          path: coverage-report
+          name: coverage-unit
+          path: coverage-unit
+
+      - name: Upload integration coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-integration
+          path: coverage-integration
