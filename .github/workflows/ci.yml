@@ -57,6 +57,17 @@ jobs:
           -reports:TestResults/**/coverage.cobertura.xml \
           -targetdir:coverage-report \
           -reporttypes:HtmlInline_AzurePipelines\;Cobertura
+
+      - name: Generate coverage report (with threshold)
+        run: |
+          reportgenerator \
+            -reports:TestResults/**/coverage.cobertura.xml \
+            -targetdir:coverage-report \
+            -reporttypes:HtmlInline_AzurePipelines;Cobertura \
+            -assemblyfilters:+MyApi* \
+            -classfilters:+MyApi* \
+            -linecoverage:60
+
           
       - name: Enforce code coverage
         run: |
