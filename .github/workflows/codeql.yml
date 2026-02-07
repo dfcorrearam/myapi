@@ -1,27 +1,45 @@
-name: CodeQL
+name: CodeQL Security Scan
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  schedule:
+    - cron: '0 3 * * 1' # weekly scan
 
 permissions:
+  security-events: write
   actions: read
   contents: read
-  security-events: write
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
         with:
           languages: csharp
-      - run: dotnet build
-      - uses: github/codeql-action/analyze@v3
 
-      - name: Fail on CodeQL alerts
-        uses: advanced-security/codeql-action/upload-sarif@v3
+      - name: Build
+        run: dotnet build
 
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+        with:
+          output: results
+
+      # Threshold gate
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Run security gate
+        run: bash scripts/check-codeql.sh
+
+      # Baseline gate (optional)
+      - name: Compare with baseline
+        run: python3 scripts/compare-sarif.py
