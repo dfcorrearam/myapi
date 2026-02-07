@@ -21,3 +21,7 @@ jobs:
           languages: csharp
       - run: dotnet build
       - uses: github/codeql-action/analyze@v3
+
+      - name: Fail on CodeQL alerts
+        uses: advanced-security/codeql-action/upload-sarif@v3
+
