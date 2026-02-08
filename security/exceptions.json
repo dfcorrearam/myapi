@@ -1,0 +1,5 @@
+{
+  "rules": [
+    "cs/hardcoded-credentials"
+  ]
+}
