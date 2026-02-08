@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  security:
+  codeql-trivy-zap:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -20,18 +20,30 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Build
+        run: dotnet build
+
+      # --------------------
+      # CodeQL Scan
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: csharp
 
-      - name: Build
-        run: dotnet build
-
-      - name: Analyze
+      - name: CodeQL Analyze
         uses: github/codeql-action/analyze@v3
         with:
           output: results
 
       - name: Compare CodeQL baseline
         run: python3 scripts/compare-codeql.py
+
+      # --------------------
+      # Container Security (Trivy)
+      - name: Trivy Scan Docker
+        run: python3 scripts/scan-trivy.py
+
+      # --------------------
+      # DAST OWASP ZAP
+      - name: Run OWASP ZAP scan
+        run: python3 scripts/run-zap.py
