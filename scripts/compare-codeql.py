@@ -8,27 +8,37 @@ EXCEPTIONS_FILE = "security/exceptions.json"
 
 SEVERITY_FAIL = {"high", "critical"}
 
-def load_json(path):
+def safe_load(path):
     if not os.path.exists(path):
+        print(f"⚠️ {path} not found, skipping baseline comparison")
         return None
+    if os.path.getsize(path) == 0:
+        print(f"⚠️ {path} is empty, skipping baseline comparison")
+        return None
+
     with open(path) as f:
         return json.load(f)
 
 def extract_findings(data):
+    if data is None:
+        return {}
+
     findings = {}
     for run in data.get("runs", []):
         rules = {r["id"]: r for r in run.get("tool", {}).get("driver", {}).get("rules", [])}
+
         for res in run.get("results", []):
             rule_id = res.get("ruleId")
-            sev = rules.get(rule_id, {}).get("properties", {}).get("security-severity", "0.0")
-            sev = float(sev)
-            severity = "low"
-            if sev >= 9.0:
+            sev = float(rules.get(rule_id, {}).get("properties", {}).get("security-severity", "0"))
+
+            if sev >= 9:
                 severity = "critical"
-            elif sev >= 7.0:
+            elif sev >= 7:
                 severity = "high"
-            elif sev >= 4.0:
+            elif sev >= 4:
                 severity = "medium"
+            else:
+                severity = "low"
 
             key = rule_id + str(res.get("locations"))
             findings[key] = {
@@ -38,30 +48,28 @@ def extract_findings(data):
             }
     return findings
 
-baseline = load_json(BASELINE)
-current = load_json(CURRENT)
-exceptions = load_json(EXCEPTIONS_FILE) or {}
+baseline = safe_load(BASELINE)
+current = safe_load(CURRENT)
+exceptions = safe_load(EXCEPTIONS_FILE) or {"rules": []}
 
 if current is None:
-    print("❌ No SARIF current file found")
+    print("❌ No SARIF results found. CodeQL failed?")
     sys.exit(1)
 
-base_findings = extract_findings(baseline) if baseline else {}
-cur_findings = extract_findings(current)
+base = extract_findings(baseline)
+cur = extract_findings(current)
 
-new_findings = {k:v for k,v in cur_findings.items() if k not in base_findings}
+new = {k:v for k,v in cur.items() if k not in base}
 
-filtered = []
-for f in new_findings.values():
-    if f["rule"] in exceptions.get("rules", []):
-        continue
-    if f["severity"] in SEVERITY_FAIL:
-        filtered.append(f)
+violations = [
+    f for f in new.values()
+    if f["severity"] in SEVERITY_FAIL and f["rule"] not in exceptions["rules"]
+]
 
-if filtered:
+if violations:
     print("❌ New HIGH/CRITICAL vulnerabilities detected:")
-    for f in filtered:
-        print(f"- [{f['severity'].upper()}] {f['rule']} -> {f['message']}")
+    for v in violations:
+        print(f" - [{v['severity'].upper()}] {v['rule']}: {v['message']}")
     sys.exit(1)
 
 print("✅ No new HIGH/CRITICAL vulnerabilities")
