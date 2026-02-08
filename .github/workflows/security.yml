@@ -1,9 +1,9 @@
 name: Security Pipeline
 
 on:
+  pull_request:
   push:
     branches: [ "main" ]
-  pull_request:
 
 jobs:
   security:
@@ -15,7 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # CodeQL Setup
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -29,6 +33,5 @@ jobs:
         with:
           output: results
 
-      # Compare with baseline
       - name: Compare CodeQL baseline
         run: python3 scripts/compare-codeql.py
