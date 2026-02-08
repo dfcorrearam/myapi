@@ -1,0 +1,22 @@
+name: PR Security Report
+
+on:
+  pull_request:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate Security Report
+        run: python3 scripts/security-report.py > report.md
+
+      - name: Comment PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: report.md
